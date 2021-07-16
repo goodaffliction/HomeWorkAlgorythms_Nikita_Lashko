@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+
+int routes(int x, int y)
+{
+	if (x == 0 && y == 0)
+		return 0;
+        
+    //obstructions
+	else if (x == 3 && y == 3)
+		return 0;
+	else if (x == 5 && y == 7)
+		return 0;
+	else if (x == 7 && y == 5)
+		return 0;
+	else if (x == 2 && y == 2)
+		return 0;
+	else if (x == 4 && y == 1)
+		return 0;
+	else if (x == 0 || y == 0)
+
+		return 1;
+	else
+		return routes(x, y - 1) + routes(x - 1, y);
+}
+
+void Func(int n) {
+	if (n != 0)
+		Func(n / 2);
+	else return;
+
+	printf("%d", n % 2);
+	return;
+}
+
+int exp(int a, int b)
+{
+	int c = a;
+	if (b == 0) return 0;
+	if (b == 1) return a;
+	else{
+		for (int i = 1; i < b; i++){
+			c *= a;
+		}
+	}
+	return c;
+}
+
+int expRec(int a, int b)
+{
+	if (b == 0) return 0;
+	if (b == 1) return a;
+	return a * expRec(a, b - 1);
+}
+
+int binpow(int a, int b) {
+	if (b == 0)
+		return 1;
+	int x = (b % 2) ? a : 1;
+	int c = binpow(a, b / 2);
+	return x * c * c;
+}
+
+int main()
+{
+	// task 5---------------------------------------------------------
+	const int sizeX = 8;
+	const int sizeY = 8;
+
+	for (int i = 0; i < sizeY; i++) {
+		for (int j = 0; j < sizeX; j++) {
+			printf("%5d", routes(i, j));
+		}
+		printf("\n");
+	}
+
+	// task 1---------------------------------------------------------
+	int n = 0;
+	printf("\nEnter number in decimal: ");
+	std::cin >> n; // when using scanf("%d", n) it's error on output
+	printf("\nNumber in binary: ");
+	Func(n);
+
+	// task 2,3,4-----------------------------------------------------
+	int a;
+	int b;
+	printf("\n\nEnter number: ");
+	std::cin >> a;
+	printf("\nEnter exponentiation: ");
+	std::cin >> b;
+
+	printf("\nNumber after expon: %d", exp(a, b));
+	printf("\nNumber after exponRec: %d", expRec(a, b));
+	printf("\nNumber after exponBin: %d", binpow(a, b));
+
+	return 0;
+}

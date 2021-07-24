@@ -1,0 +1,88 @@
+#include <iostream>
+
+void bucketSort(int* arr);
+
+int main()
+{
+	int row;
+	std::cin >> row;
+
+	int* array = new int[row];
+	for (int i = 0; i < row; i++) 
+		array[i] = rand() % 50 + 1;
+
+	for (int i = 0; i < row; i++)
+		printf("%4d", array[i]);
+	std::cout << "\n";
+
+	//qs(array, 0, row - 1);
+	//thickSplit(array, 0, row - 1);
+	//mergeSort(array, 0, row - 1);
+	bucketSort(array);
+
+	for (int i = 0; i < row; i++)
+		printf("%4d", array[i]);
+
+	delete[] array;
+	return 0;
+}
+
+void bucketSort(int* arr) {
+	const int max = 10;
+	const int b = 10;
+
+	int buckets[b][max + 1];
+
+    //array to save numbers for not to sort
+	int cage[max] = {0};
+    for (int i = 0; i < max; ++i) {
+		if (arr[i] % 2 != 0) {
+			cage[i] = arr[i];
+		}
+		else cage[i] = 0;
+	}
+
+	for (int i = 0; i < b; ++i) 
+		buckets[i][max] = 0;
+
+	for (int digit = 1; digit < 1000000000; digit *= 10) {
+		for (int i = 0; i < max; ++i) {
+			int d = (arr[i] / digit) % b;
+
+			
+			int counter = buckets[d][max];
+			buckets[d][counter] = arr[i];
+			counter++;
+			buckets[d][max] = counter;
+
+			//buckets[d][buckets[d][max]++] == arr[i];
+		}
+		int idx = 0;
+		for (int i = 0; i < b; i++) {
+			for (int j = 0; j < buckets[i][max]; j++) {
+					arr[idx++] = buckets[i][j];
+			}
+			buckets[i][max] = 0;
+		}
+	}
+
+    //Now merge not sorted numbers with sorted into the third array
+	int merge[max] = {0};
+	for (int i = 0; i < max; i++){
+		if (cage[i] == 0) {
+			for (int j = i; j < max; j++) {
+				if (arr[j] % 2 == 0) {
+					merge[i] = arr[j];
+					arr[j] = 1;
+					break;
+				}
+			}
+		}
+		else merge[i] = cage[i];
+	}
+	
+	for (int i = 0; i < max; ++i)
+	{
+		arr[i] = merge[i];
+	}
+}

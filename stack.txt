@@ -1,0 +1,52 @@
+#include <iostream>
+
+#define SIZE 10
+
+//stack values
+int cursor = -1;
+int stack[SIZE];
+
+//functions prototypes
+void Func(int);
+bool push(int);
+int pop();
+
+int main()
+{
+    Func(10);
+    while (cursor != -1) {
+        std::cout << (pop() * -1) + 1;
+    }
+}
+
+// functions
+void Func(int n) {
+    if (n != 0) {
+        Func(n / 2);
+    }
+    else return;
+
+    push(n % 2);
+    return;
+}
+
+bool push(int data) {
+    if (cursor < SIZE) {
+        stack[++cursor] = data;
+        return true;
+    }
+    else {
+        printf("%s \n", "Stack overflow!");
+        return false;
+    }
+}
+
+int pop() {
+    if (cursor != -1) {
+        return stack[cursor--];
+    }
+    else {
+        printf("%s \n", "Stack is empty!");
+        return -1;
+    }
+}

@@ -1,0 +1,131 @@
+#include <iostream>
+#define SIZE 10
+
+//variables
+typedef struct {
+	int pr;
+	int data;
+} Node;
+
+Node* arr[SIZE];
+int head;
+int tail;
+int items;
+
+//functions' prototypes
+void init();
+void insert(int, int);
+Node* rem(int);
+void printQueue();
+
+int main()
+{
+	init();
+	insert(1, 11);
+	insert(3, 22);
+	insert(8, 33);
+	insert(9, 44);
+	insert(1, 55);
+	insert(4, 66);
+	insert(3, 77);
+	insert(1, 88);
+	insert(8, 99);
+	insert(7, 100);
+	printQueue();
+
+	rem(1);
+	printQueue();
+	rem(4);
+	printQueue();
+	rem(9);
+	printQueue();
+	rem(9);
+	printQueue();
+
+	return 0;
+}
+
+//Initialization with Null
+void init() {
+	for (int i = 0; i < SIZE; ++i) {
+		arr[i] = NULL;
+	}
+	head = 0;
+	tail = 0;
+	items = 0;
+}
+
+//Insert Without priority
+void insert(int pr, int data) {
+	Node* node = (Node*)malloc(sizeof(Node));
+	node->data = data;
+	node->pr = pr;
+	int flag;
+
+	if (items == 0) {
+		arr[tail++] = node;
+		items++;
+	}
+	else if (items == SIZE) {
+		printf("%s \n", "Queue overflow!");
+		return;
+	}
+
+	else {
+		int i = 0;
+		int idx = 0;
+		Node* tmp;
+		flag = idx % SIZE;
+		i++;
+		while (i <= tail) {
+			idx = i % SIZE;
+			tmp = arr[idx];
+			arr[idx] = arr[flag];
+			arr[flag] = tmp;
+			i++;
+		}
+		arr[flag] = node;
+		items++;
+		tail++;
+	}
+}
+
+Node* rem(int pr) {
+	int i = 0;
+	int count = 0;
+	int idx = 0;
+	Node* tmp;
+	if (items == 0) {
+		return NULL;
+	}
+	else {
+		for (i = head; i < tail; ++i) {
+			idx = i % SIZE;
+			if (arr[idx]->pr == pr) {
+				idx = head++ % SIZE;
+				Node* tmp = arr[idx];
+				arr[idx] = NULL;
+				items--;
+				return tmp;
+				count++;
+				break;
+			}
+			else idx++;
+			head++;
+		}
+	}
+	if (count != 1) {
+		printf("\nThere's no value with such priority!\n");
+	}
+}
+
+void printQueue() {
+	printf("[ ");
+	for (int i = 0; i < SIZE; ++i) {
+		if (arr[i] == NULL) {
+			printf("[*, *] ");
+		}
+		else printf("[%d, %d] ", arr[i]->pr, arr[i]->data);
+	}
+	printf("]\n");
+}

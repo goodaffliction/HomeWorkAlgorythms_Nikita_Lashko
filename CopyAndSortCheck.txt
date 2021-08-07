@@ -1,0 +1,137 @@
+#include <iostream>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+    int size;
+} List;
+
+//Functions prototypes
+void init(List*);
+void insert(List*, int);
+Node* remove(List*, int);
+void printNode(Node*);
+void printList(List*);
+
+//copy function
+void Copy(List* list, List* listCopy) {
+    listCopy->head = list->head;
+    listCopy->size = list->size;
+}
+
+//sort check function
+void SortCheck(List* list) {
+    Node* current = list->head;
+    int count = 0;
+    if (current == NULL)
+        printf("\n The list is empty!");
+    else {
+        do {
+            if (current->next != NULL && current->data > current->next->data) {
+                printf("\n The list is not sorted!");
+                count++;
+                return;
+            };
+            current = current->next;
+        } while (current != NULL);
+
+        if (count == 0)
+            printf("\n The list is sorted!");
+    }
+}
+
+int main()
+{
+    List* list = (List*)malloc(sizeof(List));
+    List* listCopy = (List*)malloc(sizeof(List));
+    init(list);
+    init(listCopy);
+    insert(list, 1);
+    insert(list, 2);
+    insert(list, 5);
+    insert(list, 10);
+    printList(list);
+
+    Copy(list, listCopy);
+    printList(listCopy);
+    printList(list);
+    printNode(remove(listCopy, 1)); printf("<- removed node \n");
+    printList(listCopy);
+    SortCheck(list);
+
+    return 0;
+}
+
+void init(List* list) {
+    list->head = NULL;
+    list->size = 0;
+}
+
+void insert(List* list, int data) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->data = data;
+    node->next = NULL;
+
+    Node* current = list->head;
+    if (current == NULL) {
+        list->head = node;
+        list->size++;
+        return;
+    }
+    else {
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = node;
+        list->size++;
+    }
+}
+
+Node* remove(List* list, int data) {
+    Node* current = list->head;
+    Node* parent = NULL;
+    if (current == NULL) return NULL;
+
+    while (current->next != NULL && current->data != data) {
+        parent = current;
+        current = current->next;
+    }
+    if (current->data != data) {
+        return NULL;
+    }
+    if (current == list->head) {
+        list->head = current->next;
+        list->size--;
+        return current;
+    }
+    parent = current->next;
+    return current;
+}
+
+void printNode(Node* n) {
+    if (n == NULL) {
+        printf("[]");
+        return;
+    }
+    else {
+        printf("[%d]", n->data);
+    }
+}
+
+void printList(List* list) {
+    Node* current = list->head;
+    if (current == NULL)
+        printNode(current);
+    else {
+        do {
+            printNode(current);
+            current = current->next;
+        } while (current != NULL);
+    }
+    printf(" Size: %d \n", list->size);
+}
+

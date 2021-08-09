@@ -1,0 +1,115 @@
+#include <iostream>
+
+typedef struct Node {
+	int key;
+	struct Node* left;
+	struct Node* right;
+	int heght_L, heght_R; //to count depths of left an right parts of tree
+} TreeNode;
+
+#define TREE_ELEMENTS_COUNT 10000
+#define COUNT_OF_TREES 50
+
+//Prototypes of functions
+TreeNode* Insert(TreeNode*, int);
+void freeTree(TreeNode*);
+bool isBalanced(int, int);
+bool search(TreeNode*, int);
+
+int main() {
+	srand(unsigned(time(nullptr)));
+	int countOfBalancedTrees = 0;
+	int countOfDisbalancedTrees = 0;
+
+	//create and free 50 trees
+	for (int k = 0; k < COUNT_OF_TREES; k++) {
+		TreeNode* tree = Insert(nullptr, rand() % TREE_ELEMENTS_COUNT + 1);
+
+		//create 10000 elements of tree
+		for (int i = 0; i < TREE_ELEMENTS_COUNT - 1; ++i) {
+			Insert(tree, rand() % TREE_ELEMENTS_COUNT + 1);
+		}
+
+		//(search(tree, rand() % TREE_ELEMENTS_COUNT + 1)) ? (std::cout << "") : (std::cout << "False!\n");
+
+		(isBalanced(tree->heght_L, tree->heght_R)) ? (++countOfBalancedTrees) : (++countOfDisbalancedTrees);
+
+		freeTree(tree);
+		
+	}
+	std::cout << "The part of balanced trees: " << (float)countOfBalancedTrees / COUNT_OF_TREES * 100 << "\n";
+	std::cout << "The part of disbalanced trees: " << (float)countOfDisbalancedTrees / COUNT_OF_TREES * 100;
+
+	return 0;
+}
+
+TreeNode* Insert(TreeNode* t, int data) {
+
+	TreeNode* newNode = new TreeNode;
+	newNode->key = data;
+	newNode->left = NULL;
+	newNode->right = NULL;
+	newNode->heght_L = 0;
+	newNode->heght_R = 0;
+	TreeNode* current = t;
+	TreeNode* parent = nullptr;
+	if (t == NULL) {
+		t = newNode;
+	}
+	else {
+		while (current->key != data) {
+			parent = current;
+			if (current->key > data) {
+				current = current->left;
+				if (current == NULL) {
+					parent->left = newNode;
+					t->heght_L++;
+					return t;
+				}
+			}
+			else {
+				current = current->right;
+				if (current == NULL) {
+					parent->right = newNode;
+					t->heght_R++;
+					return t;
+				}
+			}
+		}
+	}
+	return t;
+}
+
+//To free memory
+void freeTree(TreeNode* root) {
+	if (root == nullptr) return;
+	freeTree(root->left);
+	freeTree(root->right);
+	delete root;
+	root = nullptr;
+}
+
+//Check is balanced?
+bool isBalanced(int a, int b) {
+	if (abs(a - b) > 1) return false;
+	else true;
+}
+
+//binary recursive search
+bool search(TreeNode* root, int value) {
+	if (root == nullptr)
+		return false;
+	if (root->key == value){
+		printf("The value of key is: %d \n", root->key);
+		return true;
+	}
+
+	if (root->key > value) {
+		search(root->left, value);
+	}
+	else {
+		search(root->right, value);
+	}
+	if (root == nullptr)
+		return false;
+}

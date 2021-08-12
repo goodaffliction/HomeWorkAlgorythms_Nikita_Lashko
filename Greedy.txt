@@ -1,0 +1,28 @@
+#include <iostream>
+
+void profitCalculation(int* coins, int maxSum) {
+	int sum = 0;
+	int count = 0;
+	for (int i = 0; i < 5; i++) {
+
+		do {
+			sum += coins[i];
+			count++;
+		} while (sum < maxSum);
+
+		if (sum > maxSum){
+			sum -= coins[i];
+			count--;
+		}
+
+		if (sum == maxSum) break;
+	}
+	std::cout << count;
+}
+
+int main(){
+	int coins[] = { 50, 10, 5, 2, 1 };
+	int maxSum = 98;
+	profitCalculation(coins, maxSum);
+	return 0;
+}

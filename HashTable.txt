@@ -1,0 +1,92 @@
+#include <iostream>
+
+#define T char
+using namespace std;
+
+typedef struct Node {
+	int data;
+	struct Node* next;
+};
+
+typedef char K;
+typedef int htIndex;
+int htSize;
+
+htIndex hashFunc(T** data, int sizeOfstring) {
+	int count = 0;
+	for (int i = 0; i < 1; i++) {
+		for (int j = 0; j < sizeOfstring; j++) {
+			count = count + (int)data[i][j];
+		}
+	}
+	return count;
+}
+
+bool InsertNode(Node** table, K** data, int sizeOfstring) {
+	Node* p = new Node;
+	Node* p0;
+	htIndex bucket = hashFunc(data, sizeOfstring) % htSize;
+	int sum = hashFunc(data, sizeOfstring);
+	if (p == nullptr) {
+		printf("Out of memory! \n");
+		return false;
+	}
+	p0 = table[bucket];
+	table[bucket] = p;
+	p->next = p0;
+	p->data = sum;
+	return true;
+}
+
+void printTable(Node** table, int size) {
+	Node* p;
+	for (int i = 0; i < size; ++i) {
+		p = table[i];
+		while (p){
+			printf("%5d", p->data);
+			p = p->next;
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+int main()
+{
+	srand(unsigned(time(nullptr)));
+
+	//variables
+	htSize = 7;
+	const int SZ = 7;
+	const int lnOfString = 5;
+	char** ptrarray = new char*[SZ];
+	int countArr[SZ] = { 0 };
+	Node** hashTable = (Node**)calloc(htSize, sizeof(Node*));
+
+	//initialization of arrays of char
+	for (int i = 0; i < SZ; i++) {
+		ptrarray[i] = new char[lnOfString];
+	}
+
+	for (int i = 0; i < SZ; i++) {
+		for (int j = 0; j < lnOfString; j++) {
+			ptrarray[i][j] = 64 + rand() % ('z' - 'A');
+			cout << ptrarray[i][j] << " ";
+		}
+		cout << "\n";
+	}
+	cout << "\n";
+			
+	//Insert strings in hash table
+	for (int i = 0; i < SZ; i++) {
+		for (int j = 0; j < lnOfString; j++) {}
+		InsertNode(hashTable, &ptrarray[i], lnOfString);
+	}
+	printTable(hashTable, htSize);
+
+	//free
+	for (int i = 0; i < SZ; i++)
+		delete[]ptrarray[i];
+
+	return 0;
+}

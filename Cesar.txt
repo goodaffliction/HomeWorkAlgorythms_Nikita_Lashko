@@ -1,0 +1,52 @@
+#include <iostream>
+#include <string>
+
+void cesar(std::string, int);
+
+int main()
+{
+	std::string str = "CESAR IS NOT DEAD XYZ THIS IS CESAR CODE";
+	int key = 3;
+	cesar(str, key);
+
+	return 0;
+}
+
+void cesar(std::string str, int key) {
+	
+	char* chr = _strdup(str.c_str());
+	int* strCp = new int[str.length()];
+
+	//copy
+	for (int i = 0; i < str.length(); i++) {
+		strCp[i] = chr[i];
+		std::cout << (char)strCp[i];
+	}
+
+	//scrambler
+	for (int i = 0; i < str.length(); i++) {
+		if (strCp[i] == 'X') strCp[i] = 'A';
+		else if (strCp[i] == 'Y') strCp[i] = 'B';
+		else if (strCp[i] == 'Z') strCp[i] = 'C';
+		else strCp[i] += key;
+	}
+	//message after scrambler
+	std::cout << "\n";
+	for (int i = 0; i < str.length(); i++) 
+		std::cout << (char)strCp[i];
+
+	//Decoding
+	for (int i = 0; i < str.length(); i++) {
+		if (strCp[i] == 'A') strCp[i] = 'X';
+		else if (strCp[i] == 'B') strCp[i] = 'Y';
+		else if (strCp[i] == 'C') strCp[i] = 'Z';
+		else strCp[i] -= key;
+	}
+	//message after Decoding
+	std::cout << "\n";
+	for (int i = 0; i < str.length(); i++)
+		std::cout << (char)strCp[i];
+
+	delete[] chr;
+ 	delete[] strCp;
+}

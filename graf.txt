@@ -1,0 +1,204 @@
+#include <iostream>
+
+//stack values
+#define T int
+#define SIZESTACK 10
+int cursor = -1;
+T stack[SIZESTACK];
+
+//double list queue values
+typedef struct Node {
+    int data;
+    struct Node* next;
+    struct Node* prev;
+} Node;
+
+typedef struct {
+    Node* head;
+    Node* tail;
+    int size;
+} List;
+List* queue = (List*)malloc(sizeof(List));
+const int n = 6;
+int visited[n] = { 0 };
+
+bool push(int data) {
+    if (cursor < SIZESTACK) {
+        stack[++cursor] = data;
+        return true;
+    } else {
+        printf("%s \n", "Stack overflow!");
+        return false;
+    }
+}
+
+int pop() {
+    if (cursor != -1) {
+        cursor--;
+        return stack[cursor];
+    } else {
+        printf("%s \n", "Stack is empty!");
+        return -1;
+    }
+}
+
+void clearVisited(int* arr, int size) {
+    for (int i = 0; i < size; ++i) {
+        arr[i] = 0;
+    }
+}
+
+int searchNotVisited(int st) {
+    int matrix[6][6] = {
+    {0, 1, 1, 0, 0 ,0},
+    {0, 0, 0, 1, 1 ,1},
+    {0, 0, 0, 0, 0 ,1},
+    {1, 0, 0, 0, 0 ,0},
+    {0, 0, 0, 0, 0 ,0},
+    {0, 0, 0, 0, 1 ,0},
+    };
+    int r;
+    for (r = 0; r < n; r++) {
+        if (matrix[st][r] == 1 && !visited[r]) {
+            return r;
+        }
+    }
+    return -1;
+}
+
+//Реализовать обход в глубину с использованием стека
+void depthTravers(int st) {
+    printf("%d ", st);
+    push(st);
+    visited[st] = 1;
+
+    int count = 0;
+    while (cursor != -1) {
+        st = searchNotVisited(count);
+        if (st == -1) {
+            pop();
+        }
+        else {
+            visited[st] = 1;
+            printf("%d ", st);
+            push(st);
+        }
+        count++;
+        if (count > n - 1) count = 0;
+    }
+}
+
+void resetArr() {
+    for (int i = 0; i < n; ++i) {
+        visited[i] = 0;
+    }
+    printf("\n");
+}
+
+//обход графа по матрице смежности(с подсчётом всех вершин графа)
+int arrayOfNodes[n] = { 0 };
+
+void cutoffArray(const int size) {
+    int matrix[6][6] = {
+    {0, 1, 1, 0, 0 ,0},
+    {0, 0, 0, 1, 1 ,1},
+    {0, 0, 0, 0, 0 ,1},
+    {1, 0, 0, 0, 0 ,0},
+    {0, 0, 0, 0, 0 ,0},
+    {0, 0, 0, 0, 1 ,0},
+    };
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            if (matrix[j][i] == 1) {
+                if (i != j)
+                    arrayOfNodes[i]++;
+            }
+        }
+        printf("%d ", arrayOfNodes[i]);
+    }
+}
+//обход графа рекурсивной функцией (с подсчётом только смежных со стартовой вершин)
+
+void init(List* list) {
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+}
+
+bool enqueue(List* queue, int data) {
+    Node* tmp = (Node*)malloc(sizeof(Node));
+    if (tmp == nullptr) {
+        printf("Out of memory! \n");
+        return false;
+    }
+    tmp->data = data;
+    tmp->prev = nullptr;
+    tmp->next = queue->tail;
+
+    if (queue->tail != nullptr) {
+        queue->tail->next = tmp;
+    }
+    if (queue->head == nullptr) {
+        queue->head = tmp;
+    }
+    queue->tail = tmp;
+    queue->size++;
+    return true;
+}
+
+int dequeue(List* queue) {
+    if (queue->size == 0) {
+        printf("Queue is empty \n");
+        return -1;
+    }
+    Node* tmp = queue->head;
+    int data = queue->head->data;
+    queue->head = queue->head->next;
+
+    if (queue->head != nullptr) {
+        queue->head->prev = nullptr;
+    }
+    if (tmp == queue->tail) {
+        queue->tail = nullptr;
+    }
+    delete tmp;
+    queue->size--;
+    return data;
+}
+
+void traversalCount(int start, const int size) {
+    clearVisited(visited, size);
+
+    int arrNodes[6] = { 0 };
+    int matrix[6][6] = {
+    {0, 1, 1, 0, 0 ,0},
+    {0, 0, 0, 1, 1 ,1},
+    {0, 0, 0, 0, 0 ,1},
+    {1, 0, 0, 0, 0 ,0},
+    {0, 0, 0, 0, 0 ,0},
+    {0, 0, 0, 0, 1 ,0},
+    };
+    enqueue(queue, start);
+    if (queue->size > 0) {
+        int value = dequeue(queue);
+        visited[value] = 1;
+        for (int i = 0; i < size; ++i) {
+            if (matrix[value][i] == 1) {
+                if (i != value)
+                    arrNodes[i]++;
+                if (!visited[i])
+                    traversalCount(i, size);
+            }
+        }
+    }
+}
+
+int main(){
+
+    depthTravers(0);
+    printf("\n");
+    cutoffArray(6);
+    printf("\n");
+    traversalCount(0, n);
+    return 0;
+}
